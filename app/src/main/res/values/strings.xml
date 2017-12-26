@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">BulkSMS</string>
+    <string name="no_internet">No Internet Connection !</string>
+    <string name="internet_connected">Internet Connected !</string>
+    <string name="btn_settings">SETTING!</string>
+    <string name="sms_panel_title">SMS Sending Panel!</string>
+    <string-array name="planets_array">
+        <item>Select Sender ID *</item>
+        <item>DataHostBD</item>
+        <item>eSMS</item>
+        <item>SMSinBD</item>
+        <item>880445629100</item>
+
+    </string-array>
+</resources>
