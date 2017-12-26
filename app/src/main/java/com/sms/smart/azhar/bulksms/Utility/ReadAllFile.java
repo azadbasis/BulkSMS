@@ -18,6 +18,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -116,10 +117,43 @@ public class ReadAllFile {
             {
                 cell=(XSSFCell) cells.next();
 
+                //
+//                 if(cell.getCellType() == HSSFCell.CELL_TYPE_NUMERIC){
+//
+//                // Set type as String
+//
+//                     cell.setCellType(Cell.CELL_TYPE_STRING);
+//
+//                // And read as String
+//
+//                String numberAsString = cell.getStringCellValue();
+//
+//
+//
+//                System.out.println("cell type -- number"+numberAsString);
+//
+//                     double cellValue;
+//
+//                try {
+//
+//                    cellValue = Double.parseDouble(numberAsString);
+//
+//                } catch (NumberFormatException e) {
+//
+//                    cellValue = 0; // Handle unexpected values
+//
+//                }
+//
+//            }
+                ///
+
+
+
+
                 if (cell.getCellType() == XSSFCell.CELL_TYPE_STRING)
                 {
                     System.out.print(cell.getStringCellValue()+" ");
-                    // str+=cell.getStringCellValue()+" ";
+                     str+=cell.getStringCellValue()+" ";
                     //Toast.makeText(this, cell.getStringCellValue()+" ", Toast.LENGTH_SHORT).show();
                 }
                 else if(cell.getCellType() == XSSFCell.CELL_TYPE_NUMERIC)

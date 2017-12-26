@@ -1,5 +1,6 @@
 package com.sms.smart.azhar.bulksms.Activity;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -15,11 +16,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sms.smart.azhar.bulksms.Contact;
@@ -32,8 +36,11 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 public class Activity_Main extends AppCompatActivity implements NetworkConnectionReceiver.ConnectivityRecieverListener {
 
@@ -48,6 +55,14 @@ public class Activity_Main extends AppCompatActivity implements NetworkConnectio
     RadioGroup radioGroup;
     EditText etSinglePhoneNumber;
     TextInputLayout textInputLayout;
+    private TextView tvDate;
+    private ImageView imgDate;
+
+    private DatePickerDialog fromDatePickerDialog;
+    private DatePickerDialog toDatePickerDialog;
+
+    private SimpleDateFormat dateFormatter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,10 +72,24 @@ public class Activity_Main extends AppCompatActivity implements NetworkConnectio
         bindGUIElementWithLocalControls();
         myConstraintLayout = (ConstraintLayout) findViewById(R.id.main_layout);
         listContact = Operation.loadContacts(this);
-
+        dateFormatter = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
     }
 
     private void bindGUIElementWithLocalControls() {
+
+        tvDate = (TextView)findViewById(R.id.tvDate);
+        imgDate = (ImageView) findViewById(R.id.imgDate);
+
+        imgDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getDate();
+
+            }
+        });
+
+
+
 
         textInputLayout=(TextInputLayout)findViewById(R.id.input_SinglePhoneNumber);
         radioGroup = (RadioGroup) findViewById(R.id.radioGroup);
@@ -130,6 +159,23 @@ public class Activity_Main extends AppCompatActivity implements NetworkConnectio
 
 
     }
+
+    private void getDate(){
+        Toast.makeText(Activity_Main.this, "click", Toast.LENGTH_SHORT).show();
+        Calendar newCalendar = Calendar.getInstance();
+        fromDatePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                Calendar newDate = Calendar.getInstance();
+                newDate.set(year, monthOfYear, dayOfMonth);
+                tvDate.setText(dateFormatter.format(newDate.getTime()));
+            }
+
+        },newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
+
+        fromDatePickerDialog.show();
+    }
+
 
     public void sms(View view) {
         if (checkConnectivity()) {

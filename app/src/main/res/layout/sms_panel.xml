@@ -3,16 +3,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#f6f8f8"
-android:layout_margin="@dimen/_5sdp"
+    android:layout_margin="@dimen/_5sdp"
     android:orientation="vertical">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_1sdp"
         android:gravity="center"
         android:text="SMS Sending Panel!"
-        android:textSize="@dimen/_20sdp" />
+        android:textSize="@dimen/_15sdp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -40,8 +40,9 @@ android:layout_margin="@dimen/_5sdp"
                     android:hint="Campaign Name"
                     android:letterSpacing="0.1"
                     android:textColor="#243c4b"
+                    android:padding="@dimen/_5sdp"
                     android:textColorHint="#9E9EAA"
-                    android:textStyle="bold" />
+                    android:textStyle="normal" />
             </android.support.design.widget.TextInputLayout>
 
             <Spinner
@@ -59,10 +60,13 @@ android:layout_margin="@dimen/_5sdp"
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="select option" />
+            android:text="select option"
+            android:textSize="@dimen/_10sdp"
+            />
 
         <View
             android:layout_width="match_parent"
+            android:visibility="gone"
             android:layout_height="@dimen/_2sdp"
             android:background="#f6f8f8" />
 
@@ -72,8 +76,8 @@ android:layout_margin="@dimen/_5sdp"
             android:layout_height="wrap_content"
             android:id="@+id/radioGroup"
 
-            android:layout_marginTop="@dimen/_10sdp"
-            android:layout_marginBottom="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginBottom="@dimen/_5sdp"
             android:orientation="horizontal">
 
             <RadioButton
@@ -82,7 +86,9 @@ android:layout_margin="@dimen/_5sdp"
                 android:layout_margin="@dimen/_1sdp"
                 android:layout_weight="1"
                 android:background="@drawable/radio_border"
-                android:text="Type Number" />
+                android:text="Type Number"
+                android:textSize="@dimen/_10sdp"
+                />
 
             <RadioButton
                 android:layout_width="0dp"
@@ -90,7 +96,9 @@ android:layout_margin="@dimen/_5sdp"
                 android:layout_margin="@dimen/_1sdp"
                 android:layout_weight=".8"
                 android:background="@drawable/radio_border"
-                android:text="List/Group" />
+                android:text="List/Group"
+                android:textSize="@dimen/_10sdp"
+                />
 
             <RadioButton
                 android:layout_width="0dp"
@@ -98,7 +106,9 @@ android:layout_margin="@dimen/_5sdp"
                 android:layout_margin="@dimen/_1sdp"
                 android:layout_weight=".8"
                 android:background="@drawable/radio_border"
-                android:text="Upload File" />
+                android:text="Upload File"
+                android:textSize="@dimen/_10sdp"
+                />
         </RadioGroup>
 
 
@@ -135,14 +145,14 @@ android:layout_margin="@dimen/_5sdp"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="Select SMS type:"
-                android:textSize="@dimen/_15sdp" />
+                android:textSize="@dimen/_10sdp" />
         <RadioGroup
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/radioGroupSmsType"
 
-            android:layout_marginTop="@dimen/_10sdp"
-            android:layout_marginBottom="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginBottom="@dimen/_5sdp"
             android:orientation="horizontal">
 
 
@@ -153,7 +163,9 @@ android:layout_margin="@dimen/_5sdp"
                 android:background="@drawable/radio_border"
                 android:paddingLeft="@dimen/_5sdp"
                 android:paddingRight="@dimen/_5sdp"
-                android:text="Text" />
+                android:text="Text"
+                android:textSize="@dimen/_10sdp"
+                />
 
             <RadioButton
                 android:layout_width="wrap_content"
@@ -162,7 +174,9 @@ android:layout_margin="@dimen/_5sdp"
                 android:paddingLeft="@dimen/_5sdp"
                 android:paddingRight="@dimen/_5sdp"
                 android:background="@drawable/radio_border"
-                android:text="Unicode" />
+                android:text="Unicode"
+                android:textSize="@dimen/_10sdp"
+                />
         </RadioGroup>
         </LinearLayout>
 
@@ -170,7 +184,7 @@ android:layout_margin="@dimen/_5sdp"
 
             android:id="@+id/etSmsBody"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_100sdp"
+            android:layout_height="@dimen/_80sdp"
             android:background="@drawable/border"
             android:hint="Enter sms:"
             android:letterSpacing="0.1"
@@ -179,18 +193,101 @@ android:layout_margin="@dimen/_5sdp"
             android:textColor="#243c4b"
             android:textColorHint="#9E9EAA"
             android:inputType="textMultiLine"
-            android:textStyle="bold"
+            android:textStyle="normal"
             android:gravity="start" />
 
     </LinearLayout>
 
 
 
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Schedule SMS:"
+        android:textSize="@dimen/_10sdp"
+        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        >
+
+        <RadioGroup
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/radioGroupSmsSchedule"
+
+            android:orientation="horizontal">
+
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/_2sdp"
+                android:background="@drawable/radio_border"
+                android:paddingLeft="@dimen/_5sdp"
+                android:paddingRight="@dimen/_5sdp"
+                android:text="Now"
+                android:textSize="@dimen/_10sdp"
+                />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/_2sdp"
+                android:background="@drawable/radio_border"
+                android:paddingLeft="@dimen/_5sdp"
+                android:paddingRight="@dimen/_5sdp"
+                android:text="Later"
+                android:textSize="@dimen/_10sdp"
+
+                />
+        </RadioGroup>
+
+
+        <TextView
+            android:id="@+id/tvDate"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/radio_border"
+            android:text="26/12/2017 5:30"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="@dimen/_5sdp"
+            android:padding="@dimen/_5sdp"
+            />
+
+        <ImageView
+            android:id="@+id/imgDate"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/_3sdp"
+            android:scaleType="fitXY"
+            android:layout_gravity="center_vertical|right"
+            android:src="@drawable/ic_date_range_black_18dp"
+            />
+
+    </LinearLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/_35sdp"
+        android:text="Send SMS"
+        android:background="#6254B2"
+        android:textColor="#fff"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_gravity="right"
+        />
     <ListView
-        android:visibility="gone"
+        android:visibility="visible"
         android:id="@+id/showContactList"
         android:layout_width="fill_parent"
+        android:layout_marginTop="@dimen/_3sdp"
         android:background="#9E9EAA"
-        android:layout_height="wrap_content"></ListView>
+        android:layout_height="wrap_content">
+
+    </ListView>
 
 </LinearLayout>

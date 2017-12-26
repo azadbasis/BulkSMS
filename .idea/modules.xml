@@ -3,7 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/BulkSMS.iml" filepath="$PROJECT_DIR$/BulkSMS.iml" />
+      <module fileurl="file://E:\Sadi\BulkSMS\BulkSMS.iml" filepath="E:\Sadi\BulkSMS\BulkSMS.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://E:\Sadi\BulkSMS\app\app.iml" filepath="E:\Sadi\BulkSMS\app\app.iml" />
     </modules>
   </component>
 </project>
