@@ -13,6 +13,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.sms.smart.azhar.bulksms.Contact;
+
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -86,9 +88,13 @@ public class ReadAllFile {
         Matcher mr = pattern.matcher(sb);
         while (mr.find()){
             list.add(padRight(mr.group(0),11));
+            Contact contact = new Contact();
+            contact.setContactPhoneNumber(padRight(mr.group(0),11));
+            Operation.contactList.add(contact);
         }
 
-        Toast.makeText(AppController.getAppContext(), ""+list.size(), Toast.LENGTH_SHORT).show();
+
+        Toast.makeText(AppController.getAppContext(), ""+ Operation.contactList.size(), Toast.LENGTH_SHORT).show();
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(AppController.getAppContext(), android.R.layout.simple_expandable_list_item_1, list);
         listView.setAdapter(arrayAdapter);
     }

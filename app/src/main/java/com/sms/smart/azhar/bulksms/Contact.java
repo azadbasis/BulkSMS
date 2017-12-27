@@ -12,6 +12,8 @@ public class Contact {
 
     private String checkBoxStatus;
 
+    public Contact() {
+    }
 
     public Contact(String checkBoxStatus) {
         this.checkBoxStatus = checkBoxStatus;

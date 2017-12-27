@@ -57,7 +57,7 @@ public class Operation {
         }
     }
 
-    static List<Contact> contactList;
+    public static List<Contact> contactList = new ArrayList<>();
 
     public static List<Contact> loadContacts(Context applicationContext) {
 
@@ -80,44 +80,6 @@ public class Operation {
         return contactList;
     }
 
-//    public static void sendSMSTOServer(final String contacts){
-//
-//        String url =Constant.URL;
-//
-//        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-//
-//                new Response.Listener<String>() {
-//                    @Override
-//                    public void onResponse(String response) {
-//
-//                    }
-//
-//                }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//
-//            }
-//        }){
-//            @Override
-//            protected Map<String, String> getParams() throws AuthFailureError {
-//
-//                String api_key="7b52009b64fd0a2a49e6d8a939753077792b055463bc077f9d41c9b27e8fd7ba727adfd0";
-//                String type="text";
-//                //String contacts="01717121839";
-//                String senderid="";
-//                String msg="hello";
-//                Map<String,String> sendData=new HashMap<>();
-//                sendData.put("api_key",api_key);
-//                sendData.put("type",type);
-//                sendData.put("contacts",contacts);
-//                sendData.put("senderid",senderid);
-//                sendData.put("msg",msg);
-//                return sendData;
-//            }
-//        };
-//
-//        AppController.getInstance().addToRequestQueue(stringRequest);
-//    }
 
     public static void smsToServer(String api_key, String type, String contacts, String senderid, String msg) {
 
@@ -134,8 +96,8 @@ public class Operation {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
 
-                String respons = response.body();
-                Toast.makeText(AppController.getAppContext(), "RESPONSE " + respons, Toast.LENGTH_SHORT).show();
+//                String respons = response.body();
+//                Toast.makeText(AppController.getAppContext(), "RESPONSE " + respons, Toast.LENGTH_SHORT).show();
 
 
             }

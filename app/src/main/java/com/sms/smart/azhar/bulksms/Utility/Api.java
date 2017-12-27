@@ -27,7 +27,7 @@ public interface Api {
             @Query("type") String type,
             @Query("contacts") String contacts,
             @Query("senderid") String senderid,
-            @Query("hello") String hello
+            @Query("msg") String msg
 
     );
 

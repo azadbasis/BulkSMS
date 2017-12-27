@@ -1,10 +1,14 @@
 package com.sms.smart.azhar.bulksms.Activity;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.graphics.Region;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -12,10 +16,14 @@ import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -24,10 +32,12 @@ import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.sms.smart.azhar.bulksms.Contact;
 import com.sms.smart.azhar.bulksms.R;
+import com.sms.smart.azhar.bulksms.Receiver.AlarmReceiver;
 import com.sms.smart.azhar.bulksms.Receiver.NetworkConnectionReceiver;
 import com.sms.smart.azhar.bulksms.Utility.Operation;
 import com.sms.smart.azhar.bulksms.Utility.ReadAllFile;
@@ -36,14 +46,18 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 public class Activity_Main extends AppCompatActivity implements NetworkConnectionReceiver.ConnectivityRecieverListener {
-
+    private PendingIntent pendingIntent;
+    private AlarmManager manager;
     Boolean isConnected;
     public static final String NA = "NA";
     String PathHolder;
@@ -52,38 +66,92 @@ public class Activity_Main extends AppCompatActivity implements NetworkConnectio
     List<Contact> listContact = new ArrayList<>();
     LinearLayout myLinearLayout;
     ListView showContactList;
-    RadioGroup radioGroup;
-    EditText etSinglePhoneNumber;
+    RadioGroup radioGroup,radioGroupSmsType;
+    EditText etSinglePhoneNumber,etSmsBody;
+    private String singlePhoneNumber;
     TextInputLayout textInputLayout;
     private TextView tvDate;
     private ImageView imgDate;
+    private Button btnSendSms;
 
-    private DatePickerDialog fromDatePickerDialog;
-    private DatePickerDialog toDatePickerDialog;
+    String date_time = "";
+    int mYear;
+    int mMonth;
+    int mDay;
+    int mHour;
+    int mMinute;
 
-    private SimpleDateFormat dateFormatter;
-
-
+    int cYear;
+    int cMonth;
+    int cDay;
+    int cHour;
+    int cMinute;
+    Calendar customCalender;
+    long startTime;
+    private String type,contact,senderId,msg;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sms_panel);
         // bind GUI elements with local controls
+
+        customCalender = Calendar.getInstance();
+        // Retrieve a PendingIntent that will perform a broadcast
+        Intent alarmIntent = new Intent(this, AlarmReceiver.class);
+        pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
+
         bindGUIElementWithLocalControls();
         myConstraintLayout = (ConstraintLayout) findViewById(R.id.main_layout);
-        listContact = Operation.loadContacts(this);
-        dateFormatter = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
+        //listContact = Operation.loadContacts(this);
+        //dateFormatter = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
     }
+
 
     private void bindGUIElementWithLocalControls() {
 
         tvDate = (TextView)findViewById(R.id.tvDate);
+        DateFormat dateFormatter = new SimpleDateFormat("dd-M-yyyy hh:mm");
+        dateFormatter.setLenient(false);
+        Date today = new Date();
+        String s = dateFormatter.format(today);
+        tvDate.setText(s);
+
+
         imgDate = (ImageView) findViewById(R.id.imgDate);
+        btnSendSms = (Button) findViewById(R.id.btnSendSms);
+
+        btnSendSms.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                msg = etSmsBody.getText().toString();
+                if(TextUtils.isEmpty(senderId)){
+                    Toast.makeText(Activity_Main.this, "Select sender id!", Toast.LENGTH_SHORT).show();
+                }else if(TextUtils.isEmpty(type)){
+                    Toast.makeText(Activity_Main.this, "Select type!", Toast.LENGTH_SHORT).show();
+
+                }else if(listContact.size()==0){
+                    Toast.makeText(Activity_Main.this, "Input phone number!", Toast.LENGTH_SHORT).show();
+
+                }else if(TextUtils.isEmpty(msg)){
+                    Toast.makeText(Activity_Main.this, "Input msg!", Toast.LENGTH_SHORT).show();
+
+                }else {
+
+                  for(int i = 0; i<listContact.size();i++){
+                      Operation.smsToServer("7b52009b64fd0a2a49e6d8a939753077792b0554d1b7cd7693d34c37216fb113611290cd",type,listContact.get(i).getContactPhoneNumber(),senderId,msg);
+                  }
+
+                }
+
+
+            }
+        });
 
         imgDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getDate();
+                datePicker();
 
             }
         });
@@ -93,10 +161,34 @@ public class Activity_Main extends AppCompatActivity implements NetworkConnectio
 
         textInputLayout=(TextInputLayout)findViewById(R.id.input_SinglePhoneNumber);
         radioGroup = (RadioGroup) findViewById(R.id.radioGroup);
+        radioGroupSmsType = (RadioGroup) findViewById(R.id.radioGroupSmsType);
         myLinearLayout = (LinearLayout) findViewById(R.id.activity_main);
-        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+        final Spinner spinner = (Spinner) findViewById(R.id.spinner);
         showContactList = (ListView) findViewById(R.id.showContactList);
         etSinglePhoneNumber = (EditText) findViewById(R.id.etSinglePhoneNumber);
+
+        etSinglePhoneNumber.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+                Contact contact = new Contact();
+                contact.setContactPhoneNumber(etSinglePhoneNumber.getText().toString());
+                listContact.add(contact);
+            }
+        });
+
+        etSmsBody = (EditText) findViewById(R.id.etSmsBody);
+
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.planets_array, android.R.layout.simple_spinner_item);
 
@@ -106,11 +198,9 @@ public class Activity_Main extends AppCompatActivity implements NetworkConnectio
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if (adapterView.getItemAtPosition(i).equals("Select Sender ID *")) {
-
-                } else {
-
-                }
+               if(!spinner.getSelectedItem().toString().equalsIgnoreCase("Select Sender ID *")){
+                   senderId = spinner.getSelectedItem().toString();
+               }
             }
 
             @Override
@@ -120,7 +210,23 @@ public class Activity_Main extends AppCompatActivity implements NetworkConnectio
         });
 
 
+        radioGroupSmsType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                View radioButton = radioGroup.findViewById(i);
+                int index = radioGroup.indexOfChild(radioButton);
 
+
+                switch (index) {
+                    case 0: // first button
+                        type = "text";
+                        break;
+                    case 1: // secondbutton
+                        type = "unicode";
+                        break;
+                }
+            }
+        });
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 
@@ -140,8 +246,10 @@ public class Activity_Main extends AppCompatActivity implements NetworkConnectio
                         break;
                     case 1: // secondbutton
                         textInputLayout.setVisibility(View.GONE);
-                    showContactList.setVisibility(View.VISIBLE);
-                    Operation.getPhoneList(showContactList);
+                        listContact = Operation.loadContacts(getApplicationContext());
+                        Operation.getPhoneList(showContactList);
+                        showContactList.setVisibility(View.VISIBLE);
+
                         break;
 
                     case 2: // secondbutton
@@ -160,22 +268,68 @@ public class Activity_Main extends AppCompatActivity implements NetworkConnectio
 
     }
 
-    private void getDate(){
-        Toast.makeText(Activity_Main.this, "click", Toast.LENGTH_SHORT).show();
-        Calendar newCalendar = Calendar.getInstance();
-        fromDatePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+    private void datePicker(){
 
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                Calendar newDate = Calendar.getInstance();
-                newDate.set(year, monthOfYear, dayOfMonth);
-                tvDate.setText(dateFormatter.format(newDate.getTime()));
-            }
+        // Get Current Date
+        final Calendar c = Calendar.getInstance();
+        mYear = c.get(Calendar.YEAR);
+        mMonth = c.get(Calendar.MONTH);
+        mDay = c.get(Calendar.DAY_OF_MONTH);
 
-        },newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this,
+                new DatePickerDialog.OnDateSetListener() {
 
-        fromDatePickerDialog.show();
+                    @Override
+                    public void onDateSet(DatePicker view, int year,int monthOfYear, int dayOfMonth) {
+
+                        date_time = dayOfMonth + "-" + (monthOfYear + 1) + "-" + year;
+                        //*************Call Time Picker Here ********************
+
+                        cYear = year;
+                        cMonth = monthOfYear + 1;
+                        cDay = dayOfMonth;
+
+                        tiemPicker();
+                    }
+                }, mYear, mMonth, mDay);
+        datePickerDialog.show();
     }
 
+    private void tiemPicker(){
+        // Get Current Time
+        final Calendar c = Calendar.getInstance();
+        mHour = c.get(Calendar.HOUR_OF_DAY);
+        mMinute = c.get(Calendar.MINUTE);
+
+        // Launch Time Picker Dialog
+        TimePickerDialog timePickerDialog = new TimePickerDialog(this,
+                new TimePickerDialog.OnTimeSetListener() {
+
+                    @Override
+                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+
+//                        mHour = hourOfDay;
+//                        mMinute = minute;
+                        cHour = hourOfDay;
+                        cMinute = minute;
+
+                        customCalender.set(cYear,cMonth,cDay,cHour,cMinute);
+
+                         startTime = customCalender.getTimeInMillis();
+                        startAlarm((int) startTime);
+                        tvDate.setText(date_time+" "+hourOfDay + ":" + minute);
+                    }
+                }, mHour, mMinute, false);
+        timePickerDialog.show();
+    }
+
+    public void startAlarm(int interval) {
+        manager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        //int interval = 10000;
+
+        manager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), interval, pendingIntent);
+        Toast.makeText(this, "Alarm Set", Toast.LENGTH_SHORT).show();
+    }
 
     public void sms(View view) {
         if (checkConnectivity()) {
@@ -184,7 +338,7 @@ public class Activity_Main extends AppCompatActivity implements NetworkConnectio
 String userPhoneNumber="";
             for (int i=0;i<listContact.size();i++){
                userPhoneNumber= listContact.get(i).getContactPhoneNumber();
-                Operation.smsToServer("7b52009b64fd0a2a49e6d8a939753077792b055463bc077f9d41c9b27e8fd7ba727adfd0","text",userPhoneNumber,"8804445629100","test");
+                Operation.smsToServer("7b52009b64fd0a2a49e6d8a939753077792b0554d1b7cd7693d34c37216fb113611290cd","text","8801723335972","8804445629100","this test msg");
             }
 
         } else {
@@ -207,13 +361,16 @@ String userPhoneNumber="";
                     if(PathHolder.contains(".xlsx")){
                         try {
                             ReadAllFile.readXLSXFile(PathHolder,showContactList);
+                            listContact = Operation.contactList;
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     }else if(PathHolder.contains(".xls")){
                         ReadAllFile.readExcelFile(getApplicationContext(),PathHolder,showContactList);
+                        listContact = Operation.contactList;
                     }else if(PathHolder.contains(".txt")){
                         ReadAllFile.readTxtfile(getApplicationContext(),PathHolder,showContactList);
+                        listContact = Operation.contactList;
                     }else {
                         Toast.makeText(this, "Invalid file", Toast.LENGTH_SHORT).show();
                     }
